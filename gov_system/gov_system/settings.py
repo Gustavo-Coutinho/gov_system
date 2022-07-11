@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     # from Gustavo:
     'users.apps.UsersConfig',
     'crispy_forms',
-    'uploads',
+    'biometry',
 ]
 
 MIDDLEWARE = [

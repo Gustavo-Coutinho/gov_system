@@ -3,6 +3,8 @@ from .forms import UserRegisterForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
+def verify(request):
+    return render(request, 'biometry/verify.html')
 
 def home(request):
     return render(request, 'users/home.html')

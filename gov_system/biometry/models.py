@@ -4,36 +4,33 @@ from PIL import Image
 import numpy as np
 from io import BytesIO
 from django.core.files.base import ContentFile
+from django.contrib.auth.models import User
 
 # Create your models here.
 
-ACTION_CHOICES= [
-    ('GRAYSCALE', 'grayscale')
-]
-
-class Upload(models.Model):
+class Biometry(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images')
-    action = models.CharField(max_length=50, choices=ACTION_CHOICES)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return str(self.id)
+        return str(self.user.username)
 
     def save(self, *args, **kwargs):
         # open image
         pil_img = Image.open(self.image)
 
         # convert image to array in order to process it
-        cv_img = np.array(pil_img)
-        img = get_filtered_image(cv_img, self.action)
+        image_as_array = np.array(pil_img)
+        img = get_filtered_image(image_as_array)
 
 
         # convert back to pil image
-        im_pil = Image.fromarray(img)
+        array_back_to_image = Image.fromarray(img)
 
         # save
         buffer = BytesIO()
-        im_pil.save(buffer, format='png')
+        array_back_to_image.save(buffer, format='png')
         image_png = buffer.getvalue()
 
         self.image.save(str(self.image), ContentFile(image_png), save=False)
